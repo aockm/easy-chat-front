@@ -3,19 +3,34 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+const NODE_ENV = process.env.NODE_ENV
+
+const login_width = 300;
+const login_height = 370;
+const register_height = 490;
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: login_width,
+    height: login_height,
     show: false,
     autoHideMenuBar: true,
+    titleBarStyle: 'hidden',
+    resizable: false,
+    frame: true,
+    transparent:true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+  
+  //打开控制台
+  if (NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
