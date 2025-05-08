@@ -109,3 +109,16 @@ npm create @quick-start/electron@1.0.16 easychat-front
 }
 ```
 
+
+
+引入element-plus
+
+main.js
+
+```
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css' 
+
+const app
+```
+
