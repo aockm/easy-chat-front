@@ -12,35 +12,54 @@
       >
       <!--input输入-->
         <el-form-item prop="email" >
-          <el-input size="large" clearable placeholder="请输入邮箱" v-model.trim="formData.email">
+          <el-input size="large" clearable placeholder="请输入邮箱" 
+              maxLength="30" v-model.trim="formData.email"
+              @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-email"></span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="nickName" v-if="!isLogin" >
-          <el-input size="large" clearable placeholder="请输入昵称" v-model.trim="formData.nickName">
+          <el-input 
+            size="large" clearable placeholder="请输入昵称" 
+            maxLength="15"
+            v-model.trim="formData.nickName"
+            @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-user-nick"></span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password" >
-          <el-input size="large" show-password clearable placeholder="请输入密码" v-model.trim="formData.password">
+          <el-input 
+          size="large" 
+          show-password 
+          clearable 
+          placeholder="请输入密码" 
+          v-model.trim="formData.password"
+          @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-password"></span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="rePassword" v-if="!isLogin">
-          <el-input size="large" show-password clearable placeholder="请再次输入密码" v-model.trim="formData.rePassword">
+          <el-input 
+            size="large" 
+            show-password 
+            clearable 
+            placeholder="请再次输入密码" 
+            v-model.trim="formData.rePassword"
+            @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-password"></span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="checkcode" >
-          <el-input size="large" clearable placeholder="请输入验证码" v-model.trim="formData.checkcode">
+          <el-input size="large" clearable placeholder="请输入验证码" v-model.trim="formData.checkcode"
+          @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-checkcode"></span>
             </template>
@@ -73,19 +92,34 @@ const isLogin = ref(true);
 const changeOnType = () => {
   window.ipcRenderer.send('loginOrRegister',!isLogin.value)
   isLogin.value = !isLogin.value
+  nextTick(() => {
+    formDataRef.value.resetFields();
+    formData.value = {}
+    cleanVerify()
+  })
 }
 const errorMsg = ref(null)
 const submit = () => {
-  errorMsg.value = null
+  cleanVerify()
   if (!checkValue('checkEmail',formData.value.email,'请输入正确邮箱')) {
+    return
+  }
+  if (!isLogin.value&&!checkValue(null,formData.value.nickName,'请输入昵称')) {
     return
   }
   if (!checkValue('checkPassword',formData.value.password,'密码只能是数字、字母、特殊字符8-18位')) {
     return
   }
+  if (!isLogin.value&& formData.value.password != formData.value.rePassword) {
+    errorMsg.value = '两次输入密码不一致';
+    return
+  }
   if (!checkValue(null,formData.value.checkcode,'验证码错误')) {
     return
   }
+  
+
+  
   
 }
 
@@ -132,7 +166,7 @@ const cleanVerify = () => {
     padding: 5px 15px 0px 10px;
   }
   .login-form {
-    margin-top: 40px;
+    margin-top: 37px;
     padding: 0px 15px 29px 15px;
     :deep(.el-input__wrapper) {
       box-shadow:  none;

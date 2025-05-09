@@ -20,14 +20,18 @@ function createWindow() {
     resizable: false,
     frame: true,
     transparent:true,
-    ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       contextIsolation: false
-    }
+    },
+    icon: icon
   })
-  
+  // mac下设置electron图标
+  if(process.platform ==='darwin'){ 
+    app.dock.setIcon(icon);
+    mainWindow.setTitle("EasyChat")
+  }
   ipcMain.on("loginOrRegister",(e,isLogin)=>{
     // console.log("收到渲染进程消息",isLogin);
     mainWindow.setResizable(true);
@@ -46,6 +50,7 @@ function createWindow() {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    mainWindow.setTitle("EasyChat")
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
