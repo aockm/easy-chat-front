@@ -3,10 +3,9 @@
   <div class="login-panel">
     <div class="title drag">EasyChat</div>
     <div class="login-form">
-      <div class="'error-msg'"></div>
+      <div class="error-msg">{{ errorMsg }}</div>
       <el-form
         :model="formData"
-        :rules="rules"
         ref="formDataRef"
         
         @submit.prevent
@@ -48,7 +47,7 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="checkcode" >
-          <el-button type="primary" class="login-btn" size="default" @click=""> {{ isLogin?'登录':'注册' }}</el-button>
+          <el-button type="primary" class="login-btn" size="default" @click="submit"> {{ isLogin?'登录':'注册' }}</el-button>
         </el-form-item>
         <div class="bottom-link">
           <span class="a-link" @click="changeOnType">
@@ -67,15 +66,43 @@ import { ref, reactive, getCurrentInstance, nextTick } from "vue"
 const { proxy } = getCurrentInstance();
 const formData = ref({});
 const formDataRef = ref();
-const rules = {
-  title: [{ required: true, message: "请输入内容" }],
-};
+
 
 const isLogin = ref(true);
 
 const changeOnType = () => {
   window.ipcRenderer.send('loginOrRegister',!isLogin.value)
   isLogin.value = !isLogin.value
+}
+const errorMsg = ref(null)
+const submit = () => {
+  errorMsg.value = null
+  if (!checkValue('checkEmail',formData.value.email,'请输入正确邮箱')) {
+    return
+  }
+  if (!checkValue('checkPassword',formData.value.password,'密码只能是数字、字母、特殊字符8-18位')) {
+    return
+  }
+  if (!checkValue(null,formData.value.checkcode,'验证码错误')) {
+    return
+  }
+  
+}
+
+const checkValue = (type,value,msg) => {
+  if(proxy.Utils.isEmpty(value)){
+    errorMsg.value = msg;
+    return false
+  }
+  if(type&&!proxy.Verify[type](value)) {
+    errorMsg.value = msg
+    return false
+  }
+  return true
+}
+// 清空校验
+const cleanVerify = () => {
+  errorMsg.value = null;
 }
 
 </script>
@@ -105,7 +132,7 @@ const changeOnType = () => {
     padding: 5px 15px 0px 10px;
   }
   .login-form {
-    margin-top: 65px;
+    margin-top: 40px;
     padding: 0px 15px 29px 15px;
     :deep(.el-input__wrapper) {
       box-shadow:  none;
