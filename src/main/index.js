@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -23,10 +23,22 @@ function createWindow() {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      contextIsolation: false
     }
   })
   
+  ipcMain.on("loginOrRegister",(e,isLogin)=>{
+    // console.log("收到渲染进程消息",isLogin);
+    mainWindow.setResizable(true);
+    if(isLogin){
+      mainWindow.setSize(login_width,login_height);
+    } else {
+      mainWindow.setSize(login_width,register_height);
+    }
+    mainWindow.setResizable(false);
+  })
+
   //打开控制台
   if (NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();

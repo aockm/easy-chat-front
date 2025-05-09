@@ -113,7 +113,7 @@ npm create @quick-start/electron@1.0.16 easychat-front
 
 引入element-plus
 
-main.js
+### main.js
 
 ```
 import ElementPlus from 'element-plus'
@@ -122,3 +122,13 @@ import 'element-plus/dist/index.css'
 const app
 ```
 
+### Electron 打开控制台
+
+```JavaScript
+const NODE_ENV = process.env.NODE_ENV
+
+  //打开控制台
+  if (NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
+```

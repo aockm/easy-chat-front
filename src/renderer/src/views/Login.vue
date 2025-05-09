@@ -19,8 +19,22 @@
             </template>
           </el-input>
         </el-form-item>
+        <el-form-item prop="nickName" v-if="!isLogin" >
+          <el-input size="large" clearable placeholder="请输入昵称" v-model.trim="formData.nickName">
+            <template #prefix>
+              <span class="iconfont icon-user-nick"></span>
+            </template>
+          </el-input>
+        </el-form-item>
         <el-form-item prop="password" >
           <el-input size="large" show-password clearable placeholder="请输入密码" v-model.trim="formData.password">
+            <template #prefix>
+              <span class="iconfont icon-password"></span>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="rePassword" v-if="!isLogin">
+          <el-input size="large" show-password clearable placeholder="请再次输入密码" v-model.trim="formData.rePassword">
             <template #prefix>
               <span class="iconfont icon-password"></span>
             </template>
@@ -34,10 +48,12 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="checkcode" >
-          <el-button type="primary" class="login-btn" size="default" @click="">登录</el-button>
+          <el-button type="primary" class="login-btn" size="default" @click=""> {{ isLogin?'登录':'注册' }}</el-button>
         </el-form-item>
         <div class="bottom-link">
-          <span class="a-link">没有账号？</span>
+          <span class="a-link" @click="changeOnType">
+            {{ isLogin?'没有账号？':'已有账号？' }}
+          </span>
         </div>
       </el-form>
     </div>
@@ -54,6 +70,14 @@ const formDataRef = ref();
 const rules = {
   title: [{ required: true, message: "请输入内容" }],
 };
+
+const isLogin = ref(true);
+
+const changeOnType = () => {
+  window.ipcRenderer.send('loginOrRegister',!isLogin.value)
+  isLogin.value = !isLogin.value
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -81,7 +105,7 @@ const rules = {
     padding: 5px 15px 0px 10px;
   }
   .login-form {
-    margin-top: 50px;
+    margin-top: 65px;
     padding: 0px 15px 29px 15px;
     :deep(.el-input__wrapper) {
       box-shadow:  none;
