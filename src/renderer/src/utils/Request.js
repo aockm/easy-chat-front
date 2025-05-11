@@ -85,7 +85,6 @@ const request = (config) => {
         'X-Requested-With': 'XMLHttpRequest',
         'token': token
     }    
-    console.log("获取到参赛")
     return instance.post(url, formData, {
         headers: headers,
         showLoading: showLoading,

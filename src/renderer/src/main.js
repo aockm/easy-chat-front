@@ -11,6 +11,7 @@ import Verify from '@/utils/Verify'
 import Request from '@/utils/Request'
 import Message from '@/utils/Message'
 import Api from '@/utils/Api'
+import * as Pinia from 'pinia'
 
 
 const app = createApp(App);
@@ -18,6 +19,7 @@ const app = createApp(App);
 app.use(ElementPlus);
 
 app.use(router);
+app.use(Pinia.createPinia());
 app.config.globalProperties.Utils = Utils;
 app.config.globalProperties.Verify = Verify;
 app.config.globalProperties.Request = Request;

@@ -87,8 +87,13 @@
 
 <script setup>
 import { ref, reactive, getCurrentInstance, nextTick } from "vue"
-import axios from "axios";
+import md5 from 'js-md5'
+import { useUserInfoStore } from "@/stores/UserInfoStore";
+import { useRouter } from "vue-router";
 
+
+const userInfo = useUserInfoStore();
+const router = useRouter();
 const { proxy } = getCurrentInstance();
 const formData = ref({});
 const formDataRef = ref();
@@ -107,22 +112,20 @@ const changeOnType = () => {
 // 获取验证码
 const checkCodeUrl = ref(null);
 const changeCheckCode = async() => {
-  console.log("checkCode:"+proxy.Api.checkCode);
   let result = await proxy.Request({
      url:proxy.Api.checkCode
   })
   if(!result){
     return;
   }
-  console.log(result)
 
   checkCodeUrl.value = result.data.checkCode;
-  localStorage.setItem("checkCodeKey",result.data.checkCodeKey);
+  localStorage.setItem("checkCodeKey",result.data.checkCodeKey); 
 }
 changeCheckCode();
 
 const errorMsg = ref(null)
-const submit = () => {
+const submit = async () => {
   cleanVerify()
   if (!checkValue('checkEmail',formData.value.email,'请输入正确邮箱')) {
     return
@@ -139,6 +142,35 @@ const submit = () => {
   }
   if (!checkValue(null,formData.value.checkcode,'验证码错误')) {
     return
+  }
+  let result = await proxy.Request({
+     url: isLogin.value ? proxy.Api.login : proxy.Api.register,
+     showLoading: isLogin.value ? false : true,
+     showError: false,
+     params:{
+      email: formData.value.email,
+      password: isLogin.value ? md5(formData.value.password) : formData.value.password,
+      checkCode: formData.value.checkCode,
+      nickName: formData.value.nickName,
+      checkCodeKey: localStorage.getItem('checkCodeKey')
+     },
+     errorCallBack: (response) => {
+      showLoading.value = false
+      changeCheckCode();
+      errorMsg.value = response.info;
+     }
+  })
+  if(!result){
+    return;
+  }
+
+  if(isLogin.value) {
+    userInfo.setInfo(result.data)
+    localStorage.setItem('token',result.data.token)
+    router.push
+  }else {
+    proxy.Message.success("注册成功");
+    changeOnType();
   }
   
 }
