@@ -59,7 +59,7 @@
         </el-form-item>
         <el-form-item prop="checkcode" >
           <div class="check-code-panel">
-            <el-input size="large" clearable placeholder="请输入验证码" v-model.trim="formData.checkcode"
+            <el-input size="large" clearable placeholder="请输入验证码" v-model.trim="formData.checkCode"
             @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-checkcode"></span>
@@ -140,13 +140,13 @@ const submit = async () => {
     errorMsg.value = '两次输入密码不一致';
     return
   }
-  if (!checkValue(null,formData.value.checkcode,'验证码错误')) {
+  if (!checkValue(null,formData.value.checkCode,'验证码错误')) {
     return
   }
   let result = await proxy.Request({
      url: isLogin.value ? proxy.Api.login : proxy.Api.register,
      showLoading: isLogin.value ? false : true,
-     showError: false,
+     showError: true,
      params:{
       email: formData.value.email,
       password: isLogin.value ? md5(formData.value.password) : formData.value.password,
@@ -160,15 +160,18 @@ const submit = async () => {
       errorMsg.value = response.info;
      }
   })
+  console.log(md5(formData.value.password));
   if(!result){
+    changeCheckCode();
     return;
   }
 
   if(isLogin.value) {
     userInfo.setInfo(result.data)
     localStorage.setItem('token',result.data.token)
-    router.push
+    router.push("/main")
   }else {
+    console.log("注册成功")
     proxy.Message.success("注册成功");
     changeOnType();
   }

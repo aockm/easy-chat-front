@@ -85,6 +85,7 @@ const request = (config) => {
         'X-Requested-With': 'XMLHttpRequest',
         'token': token
     }    
+
     return instance.post(url, formData, {
         headers: headers,
         showLoading: showLoading,
@@ -92,7 +93,7 @@ const request = (config) => {
         showError: showError,
         responseType: responseType
     }).catch(error => {
-        if (error.showError) {;
+        if (error.showError) {
             Message.error(error.msg)
         }
         return null;
