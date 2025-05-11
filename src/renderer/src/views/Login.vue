@@ -58,12 +58,17 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="checkcode" >
-          <el-input size="large" clearable placeholder="请输入验证码" v-model.trim="formData.checkcode"
-          @focus="cleanVerify">
+          <div class="check-code-panel">
+            <el-input size="large" clearable placeholder="请输入验证码" v-model.trim="formData.checkcode"
+            @focus="cleanVerify">
             <template #prefix>
               <span class="iconfont icon-checkcode"></span>
             </template>
+           
           </el-input>
+          <img :src="checkCodeUrl" class="check-code" @click="changeCheckCode"/>
+          </div>
+          
         </el-form-item>
         <el-form-item prop="checkcode" >
           <el-button type="primary" class="login-btn" size="default" @click="submit"> {{ isLogin?'登录':'注册' }}</el-button>
@@ -82,12 +87,13 @@
 
 <script setup>
 import { ref, reactive, getCurrentInstance, nextTick } from "vue"
+import axios from "axios";
+
 const { proxy } = getCurrentInstance();
 const formData = ref({});
 const formDataRef = ref();
-
-
 const isLogin = ref(true);
+
 
 const changeOnType = () => {
   window.ipcRenderer.send('loginOrRegister',!isLogin.value)
@@ -98,6 +104,23 @@ const changeOnType = () => {
     cleanVerify()
   })
 }
+// 获取验证码
+const checkCodeUrl = ref(null);
+const changeCheckCode = async() => {
+  console.log("checkCode:"+proxy.Api.checkCode);
+  let result = await proxy.Request({
+     url:proxy.Api.checkCode
+  })
+  if(!result){
+    return;
+  }
+  console.log(result)
+
+  checkCodeUrl.value = result.data.checkCode;
+  localStorage.setItem("checkCodeKey",result.data.checkCodeKey);
+}
+changeCheckCode();
+
 const errorMsg = ref(null)
 const submit = () => {
   cleanVerify()
@@ -117,9 +140,6 @@ const submit = () => {
   if (!checkValue(null,formData.value.checkcode,'验证码错误')) {
     return
   }
-  
-
-  
   
 }
 
@@ -166,7 +186,7 @@ const cleanVerify = () => {
     padding: 5px 15px 0px 10px;
   }
   .login-form {
-    margin-top: 37px;
+    margin-top: 35px;
     padding: 0px 15px 29px 15px;
     :deep(.el-input__wrapper) {
       box-shadow:  none;

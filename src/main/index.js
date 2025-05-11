@@ -21,6 +21,7 @@ function createWindow() {
     frame: true,
     transparent:true,
     webPreferences: {
+      webSecurity: false,   // 它将禁用同源策略 
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       contextIsolation: false

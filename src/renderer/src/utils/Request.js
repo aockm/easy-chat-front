@@ -1,16 +1,15 @@
 import axios from "axios";
 import { ElLoading } from "element-plus";
 import Message from '../utils/Message';
-import Api from '../utils/Api';
 const contentTypeForm = 'application/x-www-form-urlencoded;charset=UTF-8';
 const contentTypeJson = 'application/json';
 const responseTypeJson = 'json';
 let loading = null;
 const instance = axios.create({
     withCredentials: true,
-    baseURL: (import.meta.env.PROD ? Api.proDoamin: "") + "/api",
+    baseURL:  "http://localhost:5050/api",
     timeout: 10* 1000,
-})
+});
 
 // 请求前拦截器
 instance.interceptors.request.use(
@@ -86,6 +85,7 @@ const request = (config) => {
         'X-Requested-With': 'XMLHttpRequest',
         'token': token
     }    
+    console.log("获取到参赛")
     return instance.post(url, formData, {
         headers: headers,
         showLoading: showLoading,
