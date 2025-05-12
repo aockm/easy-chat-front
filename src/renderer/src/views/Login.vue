@@ -2,7 +2,10 @@
   
   <div class="login-panel">
     <div class="title drag">EasyChat</div>
-    <div class="login-form">
+    <div v-if="showLoading" class="loading-panel">
+      <img src="../assets/img/loading.gif"/>
+    </div>
+    <div class="login-form" v-else>
       <div class="error-msg">{{ errorMsg }}</div>
       <el-form
         :model="formData"
@@ -101,6 +104,7 @@ const isLogin = ref(true);
 
 
 const changeOnType = () => {
+  changeCheckCode();
   window.ipcRenderer.send('loginOrRegister',!isLogin.value)
   isLogin.value = !isLogin.value
   nextTick(() => {
@@ -125,6 +129,7 @@ const changeCheckCode = async() => {
 changeCheckCode();
 
 const errorMsg = ref(null)
+const showLoading = ref(false)
 const submit = async () => {
   cleanVerify()
   if (!checkValue('checkEmail',formData.value.email,'请输入正确邮箱')) {
@@ -143,6 +148,11 @@ const submit = async () => {
   if (!checkValue(null,formData.value.checkCode,'验证码错误')) {
     return
   }
+
+  if(isLogin.value) {
+    showLoading.value = true
+  }
+
   let result = await proxy.Request({
      url: isLogin.value ? proxy.Api.login : proxy.Api.register,
      showLoading: isLogin.value ? false : true,
@@ -160,7 +170,6 @@ const submit = async () => {
       errorMsg.value = response.info;
      }
   })
-  console.log(md5(formData.value.password));
   if(!result){
     changeCheckCode();
     return;
@@ -170,8 +179,19 @@ const submit = async () => {
     userInfo.setInfo(result.data)
     localStorage.setItem('token',result.data.token)
     router.push("/main")
+    const screenWidth = window.screen.width
+    const screenHeight = window.screen.height
+    window.ipcRenderer.send('openChat',{
+      email: formData.value.email,
+      token: result.data.token,
+      userId:result.data.userId,
+      nickName: result.data.nickName,
+      admin: result.data.admin,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight
+
+    })
   }else {
-    console.log("注册成功")
     proxy.Message.success("注册成功");
     changeOnType();
   }
