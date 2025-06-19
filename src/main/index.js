@@ -74,6 +74,8 @@ function createWindow() {
     mainWindow.center();
     mainWindow.setMaximizable(true);
     mainWindow.setMinimumSize(800,600);
+
+    // TODO  管理后台的窗口操作，托盘操作
     if(config.admin) {
 
     }
