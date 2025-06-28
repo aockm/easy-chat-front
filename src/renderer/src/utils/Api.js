@@ -6,6 +6,7 @@ const api = {
     checkCode:  "/account/checkCode",
     login:  "/account/login",
     register:  "/account/register",
+    search:  "/contact/search",
 
 }
 
