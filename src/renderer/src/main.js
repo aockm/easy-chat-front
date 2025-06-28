@@ -13,6 +13,7 @@ import Message from '@/utils/Message'
 import Api from '@/utils/Api'
 import * as Pinia from 'pinia'
 import Layout from '@/components/Layout.vue'
+import WinOp from '@/components/WinOp.vue'
 
 
 const app = createApp(App);
@@ -23,6 +24,7 @@ app.use(router);
 app.use(Pinia.createPinia());
 
 app.component("Layout",Layout);
+app.component("WinOp",WinOp);
 
 app.config.globalProperties.Utils = Utils;
 app.config.globalProperties.Verify = Verify;

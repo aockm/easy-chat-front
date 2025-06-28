@@ -22,6 +22,12 @@ const onLoginOrRegister = (callback) => {
 
 }
 
+const winTitleOp = (callback) => {
+    ipcMain.on("winTitleOp",(e, data) => {
+        callback(e, data)
+    })
+}
+
 const onLoginSuccess = (callback) => {
     ipcMain.on("openChat",(e,config)=>{
         callback(config)
@@ -32,5 +38,6 @@ const onLoginSuccess = (callback) => {
 
 export {
     onLoginOrRegister,
-    onLoginSuccess
+    onLoginSuccess,
+    winTitleOp
 }

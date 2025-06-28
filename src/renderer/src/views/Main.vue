@@ -26,6 +26,8 @@
       </router-view>
     </div>
   </div>
+  <WinOp :showClose="false" :showMin="false" :showMax="false" :closeType="1"></WinOp>
+
 </template>
 
 <script setup>

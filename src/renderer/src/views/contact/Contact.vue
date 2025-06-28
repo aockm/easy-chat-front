@@ -11,13 +11,19 @@
       </div>
       <div class="contact-list">
         <template v-for="item in partList">
-          <div class="par-title">{{ item.partName }}</div>
+          <div class="part-title">{{ item.partName }}</div>
           <div class="part-list">
             <div 
               v-for="sub in item.children" :class="['part-item',sub.path==route.path?'active':'']"
               @click="partJump(sub)">
               <div :class="['iconfont',sub.icon]" :style="{background: sub.iconBgColor}"></div>
+              <div class="text">{{ sub.name }}</div>
+              
             </div>
+            <template v-for="contact in item.contactData"></template>
+              <template v-if="item.contactData&&item.contactData.length==0">
+                <div class="no-data">{{ item.emptyMsg }}</div>
+              </template>
           </div>
         </template>
       </div>

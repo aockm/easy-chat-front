@@ -2,7 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { onLoginOrRegister, onLoginSuccess } from './ipc'
+import { onLoginOrRegister, onLoginSuccess, winTitleOp } from './ipc'
+import { log } from 'console'
 const NODE_ENV = process.env.NODE_ENV
 
 const login_width = 300;
@@ -78,6 +79,36 @@ function createWindow() {
     // TODO  管理后台的窗口操作，托盘操作
     if(config.admin) {
 
+    }
+  });
+  winTitleOp((e,{action,data}) => {
+    const webContents = e.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    switch(action){
+      case "close":{
+        if(data.closeType == 0) {
+          win.close();
+        }else {
+          win.setSkipTaskbar(true);
+          win.hide();
+        }
+        break;
+      }
+      case "minimize":{
+        win.minimize();
+        break;
+      }
+      case "maximize":{
+        win.maximize();
+        break;
+      }
+      case "unmaximize":{
+        win.unmaximize();
+        break;
+      }
+      case "top":{
+        win.setAlwaysOnTop(data.top);
+      }
     }
   })
 
