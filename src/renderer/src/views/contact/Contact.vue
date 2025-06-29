@@ -20,10 +20,17 @@
               <div class="text">{{ sub.name }}</div>
               
             </div>
-            <template v-for="contact in item.contactData"></template>
-              <template v-if="item.contactData&&item.contactData.length==0">
-                <div class="no-data">{{ item.emptyMsg }}</div>
-              </template>
+            <template v-for="contact in item.contactData">
+              <div 
+                @click="contactDetail(contact, item)"
+                :class="['part-item',contact[item.contactId]==route.query.contactId?'active':'']">
+                <Avatar :userId="contact[item.contactId]" :width="35"></Avatar>
+                <div class="text">{{ contact[item.contactName] }}</div>
+              </div>
+            </template>
+            <template v-if="item.contactData&&item.contactData.length==0">
+              <div class="no-data">{{ item.emptyMsg }}</div>
+            </template>
           </div>
         </template>
       </div>
@@ -112,6 +119,28 @@ const partJump = (data)=>{
   // TODO 处理联系人好友申请 数量已读
   router.push(data.path)
 }
+
+const loadContact = async (contactType) => {
+  let result = await proxy.Request({
+    url: proxy.Api.loadContact,
+    params:{
+     contactType
+    }
+  })
+  if(!result){
+    return;
+  }
+  if(contactType==='GROUP') {
+    partList.value[2].contactData = result.data
+  }else if(contactType==='USER') {
+    partList.value[3].contactData = result.data
+  }
+  
+  
+}
+
+loadContact("USER");
+loadContact("GROUP");
 </script>
 
 <style lang="scss" scoped>
