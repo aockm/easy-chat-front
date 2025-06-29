@@ -7,18 +7,23 @@
     <div v-if="searchResult&&Object.keys(searchResult).length > 0" class="search-result-panel">
       <div class="search-result">
         <span class="content-type">{{ contactTypeName }}</span>
-        <div>{{ searchResult.nickName }}</div>
+        <UserBaseInfo 
+          :userInfo="searchResult" 
+          :showArea="searchResult.contactType=='USER'">
+        </UserBaseInfo>
       </div>
-      <div class="op-btn" v-if="searchResult.contactId != userInfo.getInfo().userId">
+      <div class="op-btn" v-if="searchResult.contactId != userInfo.getInfo().userId &&userInfo.getInfo().userId != null">
         <el-button type="primary" 
-        v-if= "
-         searchResult.status == null ||
-         searchResult.status == 0 ||
-         searchResult.status == 2 ||
-         searchResult.status == 3 ||
-         searchResult.status == 4
-        "
-        @click="applyContact">{{ searchResult.contactType == 'USER' ? '添加到联系人':'申请加入群组' }}</el-button>
+          v-if= "
+          searchResult.status == null ||
+          searchResult.status == 0 ||
+          searchResult.status == 2 ||
+          searchResult.status == 3 ||
+          searchResult.status == 4
+          "
+          @click="applyContact">
+          {{ searchResult.contactType == 'USER' ? '添加到联系人':'申请加入群组' }}
+        </el-button>
         <el-button type="primary" v-if="searchResult.status == 1"  @click="sendMessage">发消息</el-button>
         <span v-if="searchResult.status == 5|| searchResult.status == 6">对方拉黑了你</span>
         
@@ -33,7 +38,9 @@ import { ref, reactive, getCurrentInstance, nextTick, computed } from "vue"
 const { proxy } = getCurrentInstance();
 import { useUserInfoStore } from "@/stores/UserInfoStore";
 
+
 const userInfo = useUserInfoStore();
+console.log(userInfo.getInfo().userId != null);
 
 const contactTypeName = computed(() => {
   if(userInfo.getInfo().userId===searchResult.value.contactId) {
@@ -66,6 +73,9 @@ const search = async () => {
   searchResult.value = result.data
 }
 
+const applyContact = ()=>{
+
+}
 </script>
 
 <style lang="scss" scoped>
