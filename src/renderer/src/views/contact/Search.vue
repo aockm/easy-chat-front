@@ -12,7 +12,7 @@
           :showArea="searchResult.contactType=='USER'">
         </UserBaseInfo>
       </div>
-      <div class="op-btn" v-if="searchResult.contactId != userInfo.getInfo().userId &&userInfo.getInfo().userId != null">
+      <div class="op-btn" v-if="searchResult.contactId != userInfo.getInfo().userId">
         <el-button type="primary" 
           v-if= "
           searchResult.status == null ||
@@ -31,12 +31,14 @@
     </div>
     <div v-else="!searchResult" class="no-data">没有搜索到任何结果</div>
   </ContentPanel>
+  <SeachAdd ref="searchAddRef" @reload="resetFrom"></SeachAdd>
 </template>
 
 <script setup>
 import { ref, reactive, getCurrentInstance, nextTick, computed } from "vue"
 const { proxy } = getCurrentInstance();
 import { useUserInfoStore } from "@/stores/UserInfoStore";
+import SeachAdd from "./SeachAdd.vue";
 
 
 const userInfo = useUserInfoStore();
@@ -72,9 +74,9 @@ const search = async () => {
   }
   searchResult.value = result.data
 }
-
+const searchAddRef = ref();
 const applyContact = ()=>{
-
+  searchAddRef.value.show(searchResult.value)
 }
 </script>
 
