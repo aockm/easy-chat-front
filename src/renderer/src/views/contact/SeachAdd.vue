@@ -37,10 +37,13 @@
 
 <script setup>
 import { ref, reactive, getCurrentInstance, nextTick } from "vue"
-const { proxy } = getCurrentInstance();
 import {useUserInfoStore} from '@/stores/UserInfoStore'
+import { useContacteStateStore } from "@/stores/ContactStateStore";
 
+
+const { proxy } = getCurrentInstance();
 const userInfoStore = useUserInfoStore()
+const contactStateSotre = useContacteStateStore()
 const formData = ref({});
 const formDataRef = ref();
 const rules = {
@@ -77,11 +80,15 @@ const submitApply = async ()=>{
     }
     if(result.data==0) {
         proxy.Message.success("加入成功");
+        contactStateSotre.setContactReload(contactType)
     }else {
         proxy.Message.success("申请成功，等待对方同意");
     }
     dialogConfig.value.show = false;
     emit("reload")
+    // if(result.data == 0 ){
+        
+    // }
 }
 
 const show = (data)=>{

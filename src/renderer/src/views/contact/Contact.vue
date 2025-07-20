@@ -45,13 +45,20 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, nextTick } from "vue"
+import { ref, reactive, getCurrentInstance, nextTick, watch } from "vue"
 const { proxy } = getCurrentInstance();
 
 import {useRouter,useRoute} from "vue-router"
 
 const router = useRouter()
 const route = useRoute()
+import { useContacteStateStore } from "@/stores/ContactStateStore";
+const  contactStateSotre = useContacteStateStore()
+const searchKey =  ref()
+
+const search = ()=>{
+
+}
 
 const partList = ref([
   {
@@ -141,6 +148,22 @@ const loadContact = async (contactType) => {
 
 loadContact("USER");
 loadContact("GROUP");
+
+watch(
+  () =>contactStateSotre.contactReload,
+ (newVal, oldVal) => {
+  if(!newVal){
+    return;
+  }
+  switch(newVal){
+    case 'USER':
+    case 'GROUP':
+      loadContact(newVal)
+      break
+  }
+ }, 
+ { immediate: true, deep: true }
+);
 </script>
 
 <style lang="scss" scoped>
