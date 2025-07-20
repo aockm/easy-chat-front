@@ -141,13 +141,24 @@ const loadContact = async (contactType) => {
     partList.value[2].contactData = result.data
   }else if(contactType==='USER') {
     partList.value[3].contactData = result.data
+  }  
+}
+const loadMyGorup = async ()=>{
+  let result = await proxy.Request({
+    url: proxy.Api.loadMyGroup,
+    showLoading: false
+    // params:{
+    // }
+  })
+  if(!result){
+    return;
   }
-  
-  
+  partList.value[1].contactData = result.data
 }
 
 loadContact("USER");
 loadContact("GROUP");
+loadMyGorup();
 
 watch(
   () =>contactStateSotre.contactReload,
@@ -159,6 +170,9 @@ watch(
     case 'USER':
     case 'GROUP':
       loadContact(newVal)
+      break
+    case 'MY':
+      loadMyGorup()
       break
   }
  }, 
